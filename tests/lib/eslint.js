@@ -1311,13 +1311,13 @@ describe("eslint", function() {
     });
 
     describe("when evaluating code containing /*global */ and /*globals */ blocks", function() {
-        var code = "/*global a b:true c:false*/ function foo() {} /*globals d:true*/";
+        var code = "/*global a b:true c:false*/ function foo() {} /*globals d:true*/ function ff(){}";
 
         it("variables should be available in global scope", function() {
             var config = { rules: {} };
 
             eslint.reset();
-            eslint.on("Program", function() {
+            eslint.on("Program:exit", function() {
                 var scope = eslint.getScope();
                 var a = getVariable(scope, "a"),
                     b = getVariable(scope, "b"),
@@ -1364,7 +1364,7 @@ describe("eslint", function() {
     });
 
     describe("when evaluating code containing /*eslint-env */ block", function() {
-        var code = "/*eslint-env node*/ function f() {} /*eslint-env browser, foo*/";
+        var code = "/*eslint-env node*/ /*eslint-env browser, foo*/ function f() {}";
 
         it("variables should be available in global scope", function() {
             var config = { rules: {} };
@@ -1606,6 +1606,36 @@ describe("eslint", function() {
         });
     });
 
+
+    describe("when evaluating code with rules in order", function() {
+
+        it("should report a violation", function() {
+            var code = "/*eslint no-alert:0 */ alert('test'); \n\n /*eslint no-alert:1 */ alert('test');";
+            var config = { rules: { "no-alert" : 1 } };
+
+            var messages = eslint.verify(code, config, filename);
+
+            assert.equal(messages.length, 1);
+            assert.equal(messages[0].ruleId, "no-alert");
+            assert.equal(messages[0].message, "Unexpected alert.");
+            assert.include(messages[0].node.type, "CallExpression");
+            assert.equal(messages[0].line, 3);
+        });
+
+        it("should report a violation", function() {
+            var code = "/*eslint no-alert:1 */ alert('test'); \n\n /*eslint no-alert:0 */ alert('test');";
+            var config = { rules: { "no-alert" : 0 } };
+
+            var messages = eslint.verify(code, config, filename);
+
+            assert.equal(messages.length, 1);
+            assert.equal(messages[0].ruleId, "no-alert");
+            assert.equal(messages[0].message, "Unexpected alert.");
+            assert.include(messages[0].node.type, "CallExpression");
+            assert.equal(messages[0].line, 1);
+        });
+    });
+
     describe("when evaluating code with comments to enable and disable multiple comma separated rules", function() {
         var code = "/*eslint no-alert:1, no-console:0*/ alert('test'); console.log('test');";
 
@@ -1739,7 +1769,7 @@ describe("eslint", function() {
         });
 
         it("should not report a violation", function() {
-            var code = "/*globals require: true */ /*eslint-env node */ require = 1;";
+            var code = "/*eslint-env node */ /*globals require: true */ require = 1;";
 
             var config = { rules: {"no-undef": 1} };
 
@@ -1761,7 +1791,7 @@ describe("eslint", function() {
         });
 
         it("should not report a violation", function() {
-            var code = "/*eslint no-process-exit: 0 */ /*eslint-env node */ process.exit();";
+            var code = "/*eslint-env node */ /*eslint no-process-exit: 0 */ process.exit();";
 
             var config = { rules: {"no-undef": 1} };
 
