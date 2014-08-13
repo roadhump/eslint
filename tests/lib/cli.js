@@ -10,7 +10,9 @@
 var assert = require("chai").assert,
     cli = require("../../lib/cli"),
     path = require("path"),
-    sinon = require("sinon");
+    sinon = require("sinon"),
+    fs = require("fs"),
+    sh = require("shelljs");
 
 //------------------------------------------------------------------------------
 // Tests
@@ -19,8 +21,8 @@ var assert = require("chai").assert,
 describe("cli", function() {
 
     beforeEach(function() {
-        sinon.stub(console, "log").returns(undefined);
-        sinon.stub(console, "error").returns(undefined);
+        sinon.stub(console, "log").returns(void 0);
+        sinon.stub(console, "error").returns(void 0);
     });
 
     afterEach(function() {
@@ -59,9 +61,7 @@ describe("cli", function() {
         it("should exit with an error status (1)", function() {
             var exitStatus;
 
-            assert.doesNotThrow(function () {
-                exitStatus = cli.execute(code);
-            });
+            exitStatus = cli.execute(code);
 
             assert.equal(exitStatus, 1);
         });
@@ -173,7 +173,6 @@ describe("cli", function() {
     describe("when given a directory with eslint excluded files in the directory", function() {
         it("should not process any files", function() {
             var exit = cli.execute("--ignore-path tests/fixtures/.eslintignore tests/fixtures");
-
             assert.isTrue(console.log.notCalled);
             assert.equal(exit, 0);
         });
@@ -278,24 +277,6 @@ describe("cli", function() {
         });
     });
 
-    describe("when executing with env flag", function () {
-        var files = [
-            "./tests/fixtures/globals-browser.js",
-            "./tests/fixtures/globals-node.js"
-        ];
-
-        it("should allow environment-specific globals", function () {
-            cli.execute("--reset --no-eslintrc --config ./conf/eslint.json --env browser,node --no-ignore " + files.join(" "));
-
-            assert.equal(console.log.args[0][0].split("\n").length, 9);
-        });
-
-        it("should allow environment-specific globals, with multiple flags", function () {
-            cli.execute("--reset --no-eslintrc --config ./conf/eslint.json --env browser --env node --no-ignore " + files.join(" "));
-            assert.equal(console.log.args[0][0].split("\n").length, 9);
-        });
-    });
-
     describe("when executing without env flag", function () {
         var files = [
             "./tests/fixtures/globals-browser.js",
@@ -337,11 +318,51 @@ describe("cli", function() {
         it("should exit with an error status (1)", function() {
             var exitStatus;
 
-            assert.doesNotThrow(function () {
-                exitStatus = cli.execute(code);
-            });
+            exitStatus = cli.execute(code);
 
             assert.equal(exitStatus, 1);
+        });
+    });
+
+    describe("when supplied with report output file path", function() {
+
+        afterEach(function () {
+            sh.rm("-rf", "tests/output");
+        });
+
+        it("should write the file and create dirs if they don't exist", function () {
+            var code = "--o tests/output/eslint-output.txt tests/fixtures/single-quoted.js";
+
+            cli.execute(code);
+
+            assert.include(fs.readFileSync("tests/output/eslint-output.txt", "utf8"), "tests/fixtures/single-quoted.js");
+            assert.isTrue(console.log.notCalled);
+        });
+
+        it("should return an error if the path is a directory", function () {
+            var code = "--o tests/output tests/fixtures/single-quoted.js";
+            var exit;
+
+            fs.mkdirSync("tests/output");
+
+            exit = cli.execute(code);
+
+            assert.equal(exit, 1);
+            assert.isTrue(console.log.notCalled);
+            assert.isTrue(console.error.calledOnce);
+        });
+
+        it("should return an error if the path could not be written to", function () {
+            var code = "--o tests/output/eslint-output.txt tests/fixtures/single-quoted.js";
+            var exit;
+
+            fs.writeFileSync("tests/output", "foo");
+
+            exit = cli.execute(code);
+
+            assert.equal(exit, 1);
+            assert.isTrue(console.log.notCalled);
+            assert.isTrue(console.error.calledOnce);
         });
     });
 });

@@ -92,17 +92,40 @@ Part of what makes ESLint useful is the way it integrates into other systems. We
 
 Additionally, we are always looking for official integrations to host under the ESLint organization on GitHub. Official integrations are tools that have a high-level quality and are managed by responsible maintainers who are committed to keeping the tool up-to-date and bettering the tool for the good of the ESLint community. If you think your integration qualifies, please contact the [mailing list](https://groups.google.com/group/eslint) with your information.
 
-## Licensing
+## Copyright and Licensing
 
 When you submit code to the ESLint project, you agree:
 
+1. The code you wrote is your original work (you own the copyright).
 1. To allow the ESLint project to use your submitted code in any way.
-2. The code you wrote is your original work.
-3. You are capable of granting rights for the submitted code.
+1. You are capable of granting rights for the submitted code.
 
 It is very important that you understand the implications of these conditions, as it gives ESLint the right to accept your contribution.
 
-## Using Pull Requests
+Since the code you wrote is your original work, you keep the copyright for it. This is why we ask you to include a copyright in the comments at the beginning of any file you submit, such as:
+
+```js
+/**
+ * @fileoverview Description of the file
+ * @author Your Name
+ * @copyright 2014 Your Name. All rights reserved.
+ */
+```
+
+The `@author` field gives you credit for having created the file. The `@copyright` field indicates that you are the copyright holder for the file.
+
+Your submission may touch other parts of the ESLint code that you did not write. In that case, you are welcome to add a copyright notice to the top of the file if you have done any amount of significant work on the file (we leave it up to you to decide what "significant" means - if you aren't sure, just ask). You should never change the `@author` field, but you can add another `@copyright` field on top of the existing ones, such as:
+
+```js
+/**
+ * @fileoverview Description of the file
+ * @author Author's Name
+ * @copyright 2015 Your Name. All rights reserved.
+ * @copyright 2014 Author's Name. All rights reserved.
+ */
+```
+
+## Pull Requests
 
 If you want to contribute to an ESLint repo, please use a GitHub pull request. This is the fastest way for us to evaluate your code and to merge it into the code base. Please don't file an issue with snippets of code. Doing so means that we need to manually merge the changes in and update any appropriate tests. That decreases the likelihood that your code is going to get included in a timely manner. Please use pull requests.
 
@@ -120,7 +143,17 @@ We want to accept your contribution. Following these guidelines helps to create 
 * Only *one commit* is allowed per pull request. If you have multiple commits, you'll be asked to squash them.
 * Follow the [Code Conventions](code-conventions.md).
 
-### Commit Messages
+### Step 1: Create a new branch
+
+The first step to sending a pull request is to create a new branch in your ESLint fork. Give the branch a descriptive name that describes what it is you're fixing, such as:
+
+```
+git checkout -b fix-broken-config
+```
+
+#### Step 2: Make your changes
+
+Make the changes to the code and tests and then commit to your branch. Be sure to follow the commit message conventions.
 
 Commit messages must follow this basic format:
 
@@ -150,6 +183,35 @@ Upgrade: Esprima to 1.2, switch to using Esprima comment attachment (fixes #730)
 
 The commit message format is important because these messages are used to create a changelog for each release. The tag and issue number help to create more consistent and useful changelogs.
 
+### Step 3: Rebase onto upstream
+
+Before you send the pull request, be sure to rebase onto the upstream source. This ensures your code is running on the latest available code.
+
+```
+git fetch upstream
+git rebase upstream/master
+```
+
+### Step 4: Run the tests
+
+After rebasing, be sure to run all of the tests once again to make sure nothing broke:
+
+```
+npm test
+```
+
+### Step 5: Squash your commits
+
+As mentioned previously, ESLint requires just one commit per pull request. If you have used multiple commits, be sure to [squash](http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html) your commits.
+
+### Step 6: Send the pull request
+
+Now you're ready to send the pull request. Go to your ESLint fork and then follow the [GitHub documentation](https://help.github.com/articles/creating-a-pull-request) on how to send a pull request.
+
+### Following Up
+
+All pull requests are sent through Travis CI to verify that no tests are broken. If the Travis build fails, it will show up on the pull request. We cannot accept any code that fails in Travis, so if this happens, make fixes and update the pull request to trigger another build.
+
 ## New Rules
 
 If you want to create a new rule, the first step is to file an issue. Make sure the issue includes the following information:
@@ -163,6 +225,3 @@ To simplify creation of new rules, use [ESLint Yeoman generator](https://github.
 
 Keep in mind that not all rules will be accepted for the main distribution. You may also request that your rule by on by default but we may accept it as off by default.
 
-## Following Up
-
-All pull requests are sent through Travis CI to verify that no tests are broken. If the Travis build fails, it will show up on the pull request. We cannot accept any code that fails in Travis, so if this happens, make fixes and update the pull request to trigger another build.

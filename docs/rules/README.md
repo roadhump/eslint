@@ -82,7 +82,7 @@ These are rules designed to prevent you from making mistakes. They either prescr
 
 These rules relate to using strict mode.
 
-* [no-global-strict](no-global-strict.md) - disallow the `"use strict"` pragma in the global scope (off by default in the node environment)
+* [global-strict](global-strict.md) - require or disallow the `"use strict"` pragma in the global scope (off by default in the node environment)
 * [no-extra-strict](no-extra-strict.md) - disallow unnecessary use of `"use strict";` when already in strict mode
 * [strict](strict.md) - require that all functions are run in strict mode
 
@@ -96,6 +96,7 @@ These rules have to do with variable declarations.
 * [no-shadow](no-shadow.md) - disallow declaration of variables already declared in the outer scope
 * [no-shadow-restricted-names](no-shadow-restricted-names.md) - disallow shadowing of names such as `arguments`
 * [no-undef](no-undef.md) - disallow use of undeclared variables unless mentioned in a `/*global */` block
+* [no-undefined](no-undefined.md) - disallow use of `undefined` variable (off by default)
 * [no-undef-init](no-undef-init.md) - disallow use of undefined when initializing variables
 * [no-unused-vars](no-unused-vars.md) - disallow declaration of variables that are not used in the code
 * [no-use-before-define](no-use-before-define.md) - disallow use of variables before they are defined
@@ -119,6 +120,7 @@ These rules are purely matters of style and are quite subjective.
 * [brace-style](brace-style.md) - enforce one true brace style (off by default)
 * [camelcase](camelcase.md) - require camel case names
 * [consistent-this](consistent-this.md) - enforces consistent naming when capturing the current execution context (off by default)
+* [eol-last](eol-last.md) - enforce newline at the end of file, with no multiple empty lines
 * [func-names](func-names.md) - require function expressions to have a name (off by default)
 * [func-style](func-style.md) - enforces use of function declarations or expressions (off by default)
 * [new-cap](new-cap.md) - require a capital letter for constructors
@@ -130,14 +132,17 @@ These rules are purely matters of style and are quite subjective.
 * [no-spaced-func](no-spaced-func.md) - disallow space between function identifier and application
 * [no-space-before-semi](no-space-before-semi.md) - disallow space before semicolon
 * [no-ternary](no-ternary.md) - disallow the use of ternary operators (off by default)
+* [no-trailing-spaces](no-trailing-spaces.md) - disallow trailing whitespace at the end of lines
 * [no-underscore-dangle](no-underscore-dangle.md) - disallow dangling underscores in identifiers
-* [no-wrap-func](no-wrap-func.md) - disallow wrapping of none IIFE statements in parents
+* [no-wrap-func](no-wrap-func.md) - disallow wrapping of non-IIFE statements in parens
+* [no-mixed-spaces-and-tabs](no-mixed-spaces-and-tabs.md) - disallow mixed spaces and tabs for indentation
 * [quotes](quotes.md) - specify whether double or single quotes should be used
 * [quote-props](quote-props.md) - require quotes around object literal property names (off by default)
-* [semi](semi.md)- require or disallow use of semicolons instead of ASI
+* [semi](semi.md) - require or disallow use of semicolons instead of ASI
 * [sort-vars](sort-vars.md) - sort variables within the same declaration block (off by default)
 * [space-after-keywords](space-after-keywords.md) - require a space after certain keywords (off by default)
-* [space-in-brackets](space-in-brackets.md) - require or disallow spaces between brackets (off by default)
+* [space-in-brackets](space-in-brackets.md) - require or disallow spaces inside brackets (off by default)
+* [space-in-parens](space-in-parens.md) - require or disallow spaces inside parentheses (off by default)
 * [space-infix-ops](space-infix-ops.md) - require spaces around operators
 * [space-return-throw-case](space-return-throw-case.md) - require a space after `return`, `throw`, and `case`
 * [space-unary-word-ops](space-unary-word-ops.md) - require a space around word operators such as `typeof` (off by default)
